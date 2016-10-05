@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('student_name', models.CharField(max_length=50)),
                 ('student_age', models.IntegerField(null=True)),
                 ('student_sex', models.CharField(max_length=2, choices=[(b'M', b'male'), (b'F', b'Female')])),
-                ('fk_primary_class', models.ForeignKey(to='schooltimetable.PrimaryClass')),
+                ('fk_primary_class', models.ForeignKey(to='school.PrimaryClass')),
             ],
         ),
         migrations.CreateModel(
@@ -42,12 +42,12 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('subject_name', models.CharField(max_length=50)),
                 ('subject_mark', models.IntegerField()),
-                ('primary_class', models.ForeignKey(to='schooltimetable.PrimaryClass')),
+                ('primary_class', models.ForeignKey(to='school.PrimaryClass')),
             ],
         ),
         migrations.AddField(
             model_name='staff',
             name='staff_subject',
-            field=models.ManyToManyField(to='schooltimetable.Subject'),
+            field=models.ManyToManyField(to='school.Subject'),
         ),
     ]

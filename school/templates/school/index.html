@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">STUDENT</a>
+        </div>
+        <!--{% comment %}-->
+        <!--<ul class="nav navbar-nav">-->
+            <!--<li class="active"><a href="#">Home</a></li>-->
+            <!--<li class="dropdown">-->
+                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">STUDENT-->
+                    <!--<span class="caret"></span></a>-->
+                <!--<ul class="dropdown-menu">-->
+                    <!--<li><a href="{% url 'requester' 'student' %}">ENTER STUDENT DETAILS</a></li>-->
+                    <!--<li><a href="#">TEACHER TIMETABLE</a></li>-->
+                    <!--<li><a href="#">CLASS 3</a></li>-->
+                <!--</ul>-->
+            <!--</li>-->
+
+            <!--<li class="dropdown">-->
+                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">TEACHER-->
+                    <!--<span class="caret"></span></a>-->
+                <!--<ul class="dropdown-menu">-->
+                    <!--<li><a href="{% url 'requester' 'teacher' %}">ENTER STUDENT DETAILS</a></li>-->
+                    <!--<li><a href="#">TEACHER TIMETABLE</a></li>-->
+                <!--</ul>-->
+            <!--</li>-->
+
+            <!--<li class="dropdown">-->
+                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">CLASS-->
+                    <!--<span class="caret"></span></a>-->
+                <!--<ul class="dropdown-menu">-->
+                    <!--<li><a href="#">CLASS 1</a></li>-->
+                    <!--<li><a href="#">CLASS 2</a></li>-->
+                    <!--<li><a href="#">CLASS 3</a></li>-->
+                    <!--<li><a href="#">CLASS 4</a></li>-->
+                    <!--<li><a href="#">CLASS 5</a></li>-->
+                <!--</ul>-->
+            <!--</li>-->
+        <!--</ul>-->
+        <!--{% endcomment %}-->
+    </div>
+</nav>
+<table>
+    <tr>
+    {% for each_cls in classes %}
+
+        <td>
+            <a href="{% url 'details' cls=each_cls.id %}">
+            {{ each_cls }}
+            </a>
+        </td>
+        <td>&nbsp;&nbsp; / &nbsp;&nbsp;</td>
+    {% endfor %}
+    </tr>
+</table>
+
+</body>
+</html>

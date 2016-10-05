@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form id="add_std_mark" action="{% url 'add_student' cls %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <input value="Submit" type="submit">
+</form>
+
+{{ cls }}
+</body>
+</html>

@@ -37,8 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'schooltimetable',
     'django_extensions',
+    'school',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -102,3 +102,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+PRIMARY_CLASSES = ['FIRST STANDARD', 'SECOND STANDARD', 'THIRD STANDARD', 'FOURTH STANDARD', 'FIFTH STANDARD']
+SUBJECTS = ['TAMIL', 'ENGLISH', 'MATHS', 'SCIENCE', 'SOCIAL']
+STAFF = ['RAJAN', 'CHANDAR', 'RIYAZ', 'JOHN', 'VITTAL']

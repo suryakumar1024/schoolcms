@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+
+{{ class_instance.class_name }}
+
+
+<p>STUDENT DETAILS</p>
+
+{% for std in student_instance %}
+    <a href="{% url 'addmark' std=std.id %}">{{ std.student_name }}</a>
+{% endfor %}
+
+<p>TIME TABLE</p>
+<table border="5">
+    <th>DAY</th>
+    <th>1</th>
+    <th>2</th>
+    <th>3</th>
+    <th>4</th>
+    <th>5</th>
+    <th>6</th>
+
+    {% for i in days %}
+        <tr>
+            <td>{{ i }}</td>
+            {% for new in class_timetable.values|slice:"0:6" %}
+                <td>{{ new }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+
+</table>
+
+
+
+
+
+
+<input type="button" onclick="window.location.href='{% url 'add_student' cls=class_instance.id %}'" value="ADD STUDENT">
+</body>
+</html>
