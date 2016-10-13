@@ -3,70 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <style>
+        .body_div{
+            text-align: center ;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 100px;
+            padding: 100px;
+            }
+
+    </style>
+
 </head>
 <body>
-
+<div class="header_div">
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">STUDENT</a>
+            <a class="navbar-brand" href="{% url 'index' %}">SCHOOL</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
         </div>
-        <!--{% comment %}-->
-        <!--<ul class="nav navbar-nav">-->
+    <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
             <!--<li class="active"><a href="#">Home</a></li>-->
-            <!--<li class="dropdown">-->
-                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">STUDENT-->
-                    <!--<span class="caret"></span></a>-->
-                <!--<ul class="dropdown-menu">-->
-                    <!--<li><a href="{% url 'requester' 'student' %}">ENTER STUDENT DETAILS</a></li>-->
-                    <!--<li><a href="#">TEACHER TIMETABLE</a></li>-->
-                    <!--<li><a href="#">CLASS 3</a></li>-->
-                <!--</ul>-->
-            <!--</li>-->
 
-            <!--<li class="dropdown">-->
-                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">TEACHER-->
-                    <!--<span class="caret"></span></a>-->
-                <!--<ul class="dropdown-menu">-->
-                    <!--<li><a href="{% url 'requester' 'teacher' %}">ENTER STUDENT DETAILS</a></li>-->
-                    <!--<li><a href="#">TEACHER TIMETABLE</a></li>-->
-                <!--</ul>-->
-            <!--</li>-->
 
-            <!--<li class="dropdown">-->
-                <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">CLASS-->
-                    <!--<span class="caret"></span></a>-->
-                <!--<ul class="dropdown-menu">-->
-                    <!--<li><a href="#">CLASS 1</a></li>-->
-                    <!--<li><a href="#">CLASS 2</a></li>-->
-                    <!--<li><a href="#">CLASS 3</a></li>-->
-                    <!--<li><a href="#">CLASS 4</a></li>-->
-                    <!--<li><a href="#">CLASS 5</a></li>-->
-                <!--</ul>-->
-            <!--</li>-->
-        <!--</ul>-->
-        <!--{% endcomment %}-->
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">CLASS
+                <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+        {% for each_cls in classes %}
+                <li><a href="{% url 'details' cls=each_cls.id %}">{{ each_cls }}</a></li>
+
+        {% endfor %}
+            </ul>
+        </li>
+
+            <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">STAFF TIMETABLE
+                <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="{% url 'staff' stf='1' %}">STAFF 1 </a></li>
+                <li><a href="{% url 'staff' stf='2' %}">STAFF 2 </a></li>
+                <li><a href="{% url 'staff' stf='3' %}">STAFF 3 </a></li>
+                <li><a href="{% url 'staff' stf='4' %}">STAFF 4 </a></li>
+                <li><a href="{% url 'staff' stf='5' %}">STAFF 5 </a></li>
+            </ul>
+        </li>
+                    </ul>
+        </div>
+
     </div>
 </nav>
-<table>
-    <tr>
-    {% for each_cls in classes %}
-
-        <td>
-            <a href="{% url 'details' cls=each_cls.id %}">
-            {{ each_cls }}
-            </a>
-        </td>
-        <td>&nbsp;&nbsp; / &nbsp;&nbsp;</td>
-    {% endfor %}
-    </tr>
-</table>
-
+</div>
+<div class="body_div">
+    SCHOOL </BR> MANAGEMENT
+</div>
 </body>
 </html>

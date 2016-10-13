@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<center><h1>{{ subject }}</h1></center>
+<table align="center" class="table table-striped">
+    <tr>
+            <th>NAME OF STUDENT</th>
+            <th>MARK</th>
+    </tr>
+
+    {% for objects in list_of_studt %}
+    {% if subject == 'TAMIL' %}
+            <tr>
+                <td>{{ objects.student_name }}</td>
+                <td>
+                {{ objects.subject.tamil }}
+                </td>
+            </tr>
+    {% endif %}
+    {% if subject == 'ENGLISH' %}
+            <tr>
+                <td>{{ objects.student_name }}</td>
+                <td>
+                {{ objects.subject.english }}
+                </td>
+            </tr>
+    {% endif %}
+    {% if subject == 'MATHS' %}
+            <tr>
+                <td>{{ objects.student_name }}</td>
+                <td>
+                {{ objects.subject.maths }}
+                </td>
+            </tr>
+    {% endif %}
+
+    {% if subject == 'SCIENCE' %}
+            <tr>
+                <td>{{ objects.student_name }}</td>
+                <td>
+                {{ objects.subject.science }}
+                </td>
+            </tr>
+    {% endif %}
+    {% if subject == 'SOCIAL' %}
+            <tr>
+                <td>{{ objects.student_name }}</td>
+                <td>
+                {{ objects.subject.social }}
+                </td>
+            </tr>
+    {% endif %}
+    {% endfor %}
+    </table>
+
+</body>
+</html>

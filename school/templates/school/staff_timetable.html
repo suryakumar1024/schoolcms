@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'index' %}">STUDENT</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+            <li><a href="{% url 'staff' stf='1' %}">STAFF 1 </a></li>
+
+            <li><a href="{% url 'staff' stf='2' %}">STAFF 2 </a></li>
+            <li><a href="{% url 'staff' stf='3' %}">STAFF 3 </a></li>
+            <li><a href="{% url 'staff' stf='4' %}">STAFF 4 </a></li>
+            <li><a href="{% url 'staff' stf='5' %}">STAFF 5 </a></li>
+        </ul>
+
+    </div>
+        </div>
+</nav>
+
+<center><u><i>TIME TABLE</i></u></center>
+<table class="table table-striped">
+    <th>DAY</th>
+    <th>1</th>
+    <th>2</th>
+    <th>3</th>
+    <th>4</th>
+    <th>5</th>
+    <th>6</th>
+
+    {% for i in days %}
+        <tr>
+            <td>{{ i }}</td>
+            {% for new in class_timetable.values|slice:"0:6" %}
+                <td>CLASS &nbsp;&nbsp;{{ new }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+
+</table>
+
+
+</body>
+</html>

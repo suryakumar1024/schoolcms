@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import RegexValidator
 # Create your models here.
 
 GENDER_CHOICES = (('F', 'Female'), ('M', 'Male'))
@@ -15,17 +15,28 @@ class PrimaryClass(models.Model):
 class Student(models.Model):
     fk_primary_class = models.ForeignKey(PrimaryClass)
     student_name = models.CharField(max_length=128, null=False, blank=False)
-    gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default='-')
 
     def __unicode__(self):
         return '%s - %s' %(self.fk_primary_class.class_name, self.student_name)
+
+    def get_total_mark(self):
+        total = 0
+        subjs = Subject.objects.filter(fk_student=self)
+        for each in subjs:
+            if each.subject_mark == 'N/A':
+                total += 0
+            elif each.subject_mark:
+                total += int(each.subject_mark)
+        return total
 
 
 class Subject(models.Model):
     fk_primary_class = models.ForeignKey(PrimaryClass)
     fk_student = models.ForeignKey(Student, null=True)
     subject_name = models.CharField(max_length=128, null=False, blank=False)
-    subject_mark = models.CharField(max_length=3, null=True, blank=False)
+    subject_mark = models.CharField(max_length=3, null=True, default='N/A')
+# validators=[RegexValidator(regex='^[0-9]*$', message='only numbers'),])
 
     def __unicode__(self):
         return '%s - %s' % (self.fk_primary_class.class_name, self.subject_name)
