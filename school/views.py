@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 
 from form import ClassForm, StaffForm, StudentForm, SubjectForm, StudentMarkForm, StudentGeneratorbox
-from models import PrimaryClass, Subject, Staff, Student
+from models import PrimaryClass, Subject, Staff, Student, Timetable, Period
 
 
 # Create your views here.
@@ -38,48 +38,89 @@ def sort_qs_with_total_mark(student_qs):
 
 def sort_qs_with_sub_name(student_qs, sub_name):
     cls_std_sub = collections.OrderedDict()
-
     unsorted_students = list(student_qs)
-
     while unsorted_students:
         temp_student = unsorted_students[0]
         for each_student in unsorted_students:
+                if sub_name == 'TAMIL':
+                    tem_max_mark = temp_student.subject_set.get(subject_name='TAMIL').subject_mark
+                    each_max_mark = each_student.subject_set.get(subject_name='TAMIL').subject_mark
+                    if each_max_mark == 'N/A' or tem_max_mark == 'N/A':
+                        pass
+                    elif int(each_max_mark) > int(tem_max_mark):
+                        temp_student = each_student
 
-            if sub_name == 'TAMIL':
-                tem_max_mark = temp_student.subject_set.get(subject_name='TAMIL').subject_mark
-                each_max_mark = each_student.subject_set.get(subject_name='TAMIL').subject_mark
-                if int(each_max_mark) > int(tem_max_mark):
-                    temp_student = each_student
+                if sub_name == 'ENGLISH':
+                    tem_max_mark = temp_student.subject_set.get(subject_name='ENGLISH').subject_mark
+                    each_max_mark = each_student.subject_set.get(subject_name='ENGLISH').subject_mark
+                    if each_max_mark == 'N/A' or tem_max_mark == 'N/A':
+                        pass
+                    elif int(each_max_mark) > int(tem_max_mark):
+                        temp_student = each_student
 
-            if sub_name == 'ENGLISH':
-                tem_max_mark = temp_student.subject_set.get(subject_name='ENGLISH').subject_mark
-                each_max_mark = each_student.subject_set.get(subject_name='ENGLISH').subject_mark
-                if int(each_max_mark) > int(tem_max_mark):
-                    temp_student = each_student
+                if sub_name == 'MATHS':
+                    tem_max_mark = temp_student.subject_set.get(subject_name='MATHS').subject_mark
+                    each_max_mark = each_student.subject_set.get(subject_name='MATHS').subject_mark
+                    if each_max_mark == 'N/A' or tem_max_mark == 'N/A':
+                        pass
+                    elif int(each_max_mark) > int(tem_max_mark):
+                        temp_student = each_student
 
-            if sub_name == 'MATHS':
-                tem_max_mark = temp_student.subject_set.get(subject_name='MATHS').subject_mark
-                each_max_mark = each_student.subject_set.get(subject_name='MATHS').subject_mark
-                if int(each_max_mark) > int(tem_max_mark):
-                    temp_student = each_student
+                if sub_name == 'SCIENCE':
+                    tem_max_mark = temp_student.subject_set.get(subject_name='SCIENCE').subject_mark
+                    each_max_mark = each_student.subject_set.get(subject_name='SCIENCE').subject_mark
+                    if each_max_mark == 'N/A' or tem_max_mark == 'N/A':
+                        pass
+                    elif int(each_max_mark) > int(tem_max_mark):
+                        temp_student = each_student
 
-            if sub_name == 'SCIENCE':
-                tem_max_mark = temp_student.subject_set.get(subject_name='SCIENCE').subject_mark
-                each_max_mark = each_student.subject_set.get(subject_name='SCIENCE').subject_mark
-                if int(each_max_mark) > int(tem_max_mark):
-                    temp_student = each_student
-
-            if sub_name == 'SOCIAL':
-                tem_max_mark = temp_student.subject_set.get(subject_name='SOCIAL').subject_mark
-                each_max_mark = each_student.subject_set.get(subject_name='SOCIAL').subject_mark
-                if int(each_max_mark) > int(tem_max_mark):
-                    temp_student = each_student
-
+                if sub_name == 'SOCIAL':
+                    tem_max_mark = temp_student.subject_set.get(subject_name='SOCIAL').subject_mark
+                    each_max_mark = each_student.subject_set.get(subject_name='SOCIAL').subject_mark
+                    if each_max_mark == 'N/A' or tem_max_mark == 'N/A':
+                        pass
+                    elif int(each_max_mark) > int(tem_max_mark):
+                        temp_student = each_student
         subj_qs = temp_student.subject_set.all()
         cls_std_sub[temp_student] = subj_qs
         unsorted_students.remove(temp_student)
 
     return cls_std_sub
+
+
+def generate_time_table(request):
+
+    if Period.objects.exists() or Timetable.objects.exists():
+        Period.objects.all().delete()
+        Timetable.objects.all().delete()
+        for standard in range(len(settings.PRIMARY_CLASSES)):
+            instance_primary_class = get_object_or_404(PrimaryClass, class_name=settings.PRIMARY_CLASSES[standard])
+            for day in range(len(settings.DAY_OF_WEEK)):
+                instance_time_table = Timetable.objects.create(fk_primary_class=instance_primary_class,
+                                                               name_of_day=settings.DAY_OF_WEEK[day])
+                for period in range(0,6):
+                    Period.objects.create(fk_timetable=instance_time_table, subject_period=random.choice(settings.STAFF))
+            # for period in range(0,5):
+            #     c = period + standard
+            #     if period >= len(settings.STAFF):
+            #         p = period - len(settings.STAFF)
+            #         Period.objects.create(fk_timetable=instance_time_table, subject_period=settings.STAFF[p])
+            #     else:
+            #         Period.objects.create(fk_timetable=instance_time_table, subject_period=settings.STAFF[c])
+    return render(request, 'school/index.html', {'classes': PrimaryClass.objects.all()})
+
+
+# def get_class_table(request):
+#     instance_class = get_object_or_404(PrimaryClass, class_name=settings.PRIMARY_CLASSES[0])
+#     table_instance = Timetable.objects.filter(fk_primary_class=instance_class)
+#     table_instance_ls = list(table_instance)
+#     diction = collections.OrderedDict()
+#
+#     for each in table_instance_ls:
+#         period_instance = Period.objects.filter(fk_timetable=each)
+#         period_instance_ls = list(period_instance)
+#         diction[each]=period_instance_ls
+#     return render(request, 'school/time_table_generation.html', {'table': diction})
 
 
 def get_time_table(no_of_staff, no_of_classes):
@@ -137,6 +178,8 @@ def add_student(request, cls):
             add_std_inst.save()
             for sub in settings.SUBJECTS:
                 Subject.objects.create(fk_primary_class=class_instance, fk_student=add_std_inst, subject_name=sub)
+        else:
+            return render(request, 'school/add_student.html', {'form': form,'cls': cls, 'class_name': class_instance })
     return HttpResponseRedirect(reverse('details', kwargs={'cls': class_instance.id}))
 
 
@@ -146,37 +189,63 @@ def get_staff_details(request,stf):
     return render(request, 'school/staff_timetable.html', {'days': days, 'class_timetable': class_timetable})
 
 
-def get_class_details(request, cls, subject=None):
+def get_class_details(request, cls, types=None, subject=None):
     individual_class_instance = get_object_or_404(PrimaryClass, pk=cls)
     student_qs = Student.objects.filter(fk_primary_class=individual_class_instance)
     list_class_instance = PrimaryClass.objects.all()
     days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
-
+    # import ipdb; ipdb.set_trace()
     if subject:
         cls_std_sub = sort_qs_with_sub_name(student_qs, subject)
     else:
         cls_std_sub = sort_qs_with_total_mark(student_qs)
 
-    if individual_class_instance.class_name == 'FIRST STANDARD':
-        class_timetable = get_time_table(5, 5)['class1']
+    # instance_class = get_object_or_404(PrimaryClass, class_name=individual_class_instance.class_name)
+    table_instance = Timetable.objects.filter(fk_primary_class=individual_class_instance)
+    table_instance_ls = list(table_instance)
+    diction = collections.OrderedDict()
 
-    elif individual_class_instance.class_name == 'SECOND STANDARD':
-        class_timetable = get_time_table(5, 5)['class2']
+    for each in table_instance_ls:
+        period_instance = Period.objects.filter(fk_timetable=each)
+        period_instance_ls = list(period_instance)
+        diction[each] = period_instance_ls
 
-    elif individual_class_instance.class_name == 'THIRD STANDARD':
-        class_timetable = get_time_table(5, 5)['class3']
+    # if individual_class_instance.class_name == 'FIRST STANDARD':
+    #     class_timetable = get_time_table(5, 5)['class1']
+    #
+    # elif individual_class_instance.class_name == 'SECOND STANDARD':
+    #     class_timetable = get_time_table(5, 5)['class2']
+    #
+    # elif individual_class_instance.class_name == 'THIRD STANDARD':
+    #     class_timetable = get_time_table(5, 5)['class3']
+    #
+    # elif individual_class_instance.class_name == 'FOURTH STANDARD':
+    #     class_timetable = get_time_table(5, 5)['class4']
+    #
+    # elif individual_class_instance.class_name == 'FIFTH STANDARD':
+    #     class_timetable = get_time_table(5, 5)['class5']
 
-    elif individual_class_instance.class_name == 'FOURTH STANDARD':
-        class_timetable = get_time_table(5, 5)['class4']
-
-    elif individual_class_instance.class_name == 'FIFTH STANDARD':
-        class_timetable = get_time_table(5, 5)['class5']
-
-    return render(request, 'school/report.html', {'class_timetable': class_timetable,
+    return render(request, 'school/report.html', {'table': diction,
                                                   'days': days, 'individual_class_instance': individual_class_instance,
                                                   'cls_std_sub': cls_std_sub,
                                                   'list_class_instance': list_class_instance,
                                                   })
+
+    # 'CheckBoxdelete': CheckBoxdelete(queryset=Student.objects.all())
+                                                  # })
+
+
+def delete_all(request):
+    if request.method == 'POST':
+        if request.POST:
+            selected_students = request.POST.getlist('selected')
+            for each_students in selected_students:
+                student_object = get_object_or_404(Student, pk=each_students)
+                student_object.delete()
+        else:
+            pass
+
+    return index(request)
 
 
 def addmark(request, std):
@@ -228,15 +297,15 @@ def addmark(request, std):
     return render(request, 'school/add_mark.html', {'form': form, 'std': std, 'std_name': std_name})
 
 
-def subject_wise_sorting(request, cls, subject):
-    individual_class = get_object_or_404(PrimaryClass, pk=cls)
-    student_qs = Student.objects.filter(fk_primary_class=individual_class)
-    cls_std_sub = collections.OrderedDict()
-    for each_student in student_qs:
-        subj_qs = each_student.subject_set.filter(subject_name=subject)
-        cls_std_sub[each_student] = subj_qs
-    return render(request, 'school/subject_wise_ranking.html', {'cls_std_sub': cls_std_sub})
-
+# def subject_wise_sorting(request, cls, subject):
+#     individual_class = get_object_or_404(PrimaryClass, pk=cls)
+#     student_qs = Student.objects.filter(fk_primary_class=individual_class)
+#     cls_std_sub = collections.OrderedDict()
+#     for each_student in student_qs:
+#         subj_qs = each_student.subject_set.filter(subject_name=subject)
+#         cls_std_sub[each_student] = subj_qs
+#     return render(request, 'school/subject_wise_ranking.html', {'cls_std_sub': cls_std_sub})
+#
 
 def delete(request, std):
     student_object =get_object_or_404(Student, pk=std)
@@ -245,15 +314,15 @@ def delete(request, std):
 
 
 def student_generator(request, cls):
-    # import ipdb; ipdb.set_trace()
     if request.method == 'GET':
         form = StudentGeneratorbox()
     else:
         form = StudentGeneratorbox(request.POST)
         if form.is_valid():
-            form_student_list = form.cleaned_data['STUDNET_NAME']
+            form_student_list = form.cleaned_data['STUDENT_NAME']
             student_data = form_student_list.split(",")
             student_list = []
+
             for student in range(len(student_data)):
                 student_list.append((student_data[student].strip()))
 

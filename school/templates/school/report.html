@@ -15,7 +15,80 @@
         color: #737373;
         }
 
+        .dropbtn {
+            background-color: #f2f2f2;
+            color: #8c8c8c;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropbtn:hover, .dropbtn:focus {
+            color: #333333;
+        }
+
+        .dropdown {
+            float: left;
+            position: relative;
+            display: inline-block;
+
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 100px;
+            overflow: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            right: 0;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown a:hover {background-color: #f1f1f1}
+
+        .show {display:block;}
+
     </style>
+    <script>
+          function checkAll(bx) {
+          var cbs = document.getElementsByClassName('check_all');
+          for(var i=0; i < cbs.length; i++) {
+            if(cbs[i].type == 'checkbox') {
+              cbs[i].checked = bx.checked;
+            }
+          }
+        }
+
+    <!--function myFunction() {-->
+        <!--document.getElementById("myDropdown").classList.toggle("show");-->
+    <!--}-->
+
+    <!--window.onclick = function(event) {-->
+      <!--if (!event.target.matches('.dropbtn')) {-->
+
+        <!--var dropdowns = document.getElementsByClassName("dropdown-content");-->
+        <!--var i;-->
+        <!--for (i = 0; i < dropdowns.length; i++) {-->
+          <!--var openDropdown = dropdowns[i];-->
+          <!--if (openDropdown.classList.contains('show')) {-->
+            <!--openDropdown.classList.remove('show');-->
+          <!--}-->
+        <!--}-->
+      <!--}-->
+    <!--}-->
+
+
+    </script>
+
+
 </head>
 <body>
 
@@ -26,15 +99,31 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
-                </button>
+            </button>
             <a class="navbar-brand" href="{% url 'index' %}">STUDENT</a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
-    {% for each_cls in list_class_instance %}
-        <ul class="nav navbar-nav">
-            <li><a href="{% url 'details' cls=each_cls.id %}">{{ each_cls }}</a></li>
-        </ul>
-    {% endfor %}
+            <ul class="nav navbar-nav">
+                {% for each_cls in list_class_instance %}
+
+                <li><a href="{% url 'details' cls=each_cls.id %}">{{ each_cls }}</a></li>
+                <!--</ul>-->
+                {% endfor %}
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">ADD STUDENTS
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'add_student' cls=individual_class_instance.id %}"> ADD STUDENT </a></li>
+                        <li><a href="{% url 'student_generator' cls=individual_class_instance.id %}"> ADD GROUP OF STUDENTS </a>
+                        </li>
+                        <!--<li><a href="{% url 'generate_table' %}">Create Timetable</a></li>-->
+
+                    </ul>
+                </li>
+
+
+            </ul>
         </div>
     </div>
 </nav>
@@ -43,75 +132,116 @@
 
 <center><h2>STUDENT DETAILS</h2></center>
 <table class="table table-striped">
-    <tr>
-        <th>STUDENT NAME</th>
-        <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='TAMIL' %}">TAMIL</a></th>
-        <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='ENGLISH' %}">ENGLISH</a></th>
-        <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='MATHS' %}">MATHS</a></th>
-        <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='SCIENCE' %}">SCIENCE</a></th>
-        <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='SOCIAL' %}">SOCIAL</a></th>
-        <th>TOTAL</th>
-        <th>UPDATE</th>
-        <th>DELETE</th>
-    </tr>
+    <form id="add_std_form" action="{% url 'delete_all' %}" method="post" enctype="multipart/form-data">
 
-    {% for key,value in cls_std_sub.items %}
+
+        {% csrf_token %}
         <tr>
+            <th>
+            <input type="checkbox" onclick="checkAll(this)">
+            </th>
+            <th>STUDENT NAME</th>
+            <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='TAMIL' %}">TAMIL</a></th>
+            <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='ENGLISH' %}">ENGLISH</a></th>
+            <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='MATHS' %}">MATHS</a></th>
+            <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='SCIENCE' %}">SCIENCE</a></th>
+            <th><a href="{% url 'subject_sort' cls=individual_class_instance.id subject='SOCIAL' %}">SOCIAL</a></th>
+            <th><a href="{% url 'details' cls=individual_class_instance.id %}">TOTAL</a></th>
+            <th>UPDATE</th>
+            <th>DELETE</th>
+        </tr>
+
+        {% for key,value in cls_std_sub.items %}
+        <tr>
+            <td><input type="checkbox" class="check_all" name="selected" value="{{ key.id }}"></td>
             <td>
                 {{ key.student_name }}
             </td>
             {% for std_subjects in value %}
 
-                <td>
+            <td>
 
-                        {{ std_subjects.subject_mark }}
+                {{ std_subjects.subject_mark }}
 
 
-                </td>
+            </td>
 
             {% endfor %}
             <td>
                 {% if key.get_total_mark == 0 %}
-                  --
+                --
                 {% else %}
-                    {{ key.get_total_mark }}
+                {{ key.get_total_mark }}
                 {% endif %}
 
             </td>
             <td><a href="{% url 'addmark' std=key.id %}"><u>Update</u></a></td>
-                <td><a href="{% url 'delete' std=key.id %}"><u>Delete</u></a></td>
+            <td><a href="{% url 'delete' std=key.id %}"><u>Delete</u></a></td>
         </tr>
-    {% endfor %}
-
+        {% endfor %}
+        <tr>
+            <!--<div class="dropdown">-->
+                <!--<button onclick="myFunction()" class="dropbtn">Dropdown</button>-->
+                <!--<div id="myDropdown" class="dropdown-content">-->
+                    <!--<a href="#home">Home</a>-->
+                <!--</div>-->
+            <!--</div>-->
+            <a href="" onclick="document.getElementById('add_std_form').submit()">DELETE SELECTED</a>
+    </form>
+    </tr>
 </table>
 <center>
-<input type="button" onclick="window.location.href='{% url 'add_student' cls=individual_class_instance.id %}'"
-       value="ADD STUDENT" class="btn btn-primary"></br>
-    <a href="{% url 'generator' cls=individual_class_instance.id %}">ADD GROUP OF STUDENTS </a>
-    </center>
+    <input type="button" onclick="window.location.href='{% url 'add_student' cls=individual_class_instance.id %}'"
+           value="ADD STUDENT" class="btn btn-primary"></br>
+    <a href="{% url 'student_generator' cls=individual_class_instance.id %}">ADD GROUP OF STUDENTS </a>
+</center>
+
 
 <center><h2>TIME TABLE</h2></center>
+
 <table class="table table-striped">
+
     <tr>
-    <th>DAY</th>
-    <th>1</th>
-    <th>2</th>
-    <th>3</th>
-    <th>4</th>
-    <th>5</th>
-    <th>6</th>
+        <th>DAY</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
     </tr>
 
-    {% for i in days %}
-        <tr>
-            <td>{{ i }}</td>
-            {% for new in class_timetable.values|slice:"0:6" %}
-                <td>STAFF &nbsp;&nbsp;{{ new }}</td>
-            {% endfor %}
-        </tr>
+    {% for key, value in table.items %}
+    <tr>
+        <td>{{ key }}</td>
+        {% for period in value %}
+        <td>{{ period }}</td>
+        {% endfor %}
+    </tr>
     {% endfor %}
 
 </table>
+<!--<table class="table table-striped">-->
+<!--<tr>-->
+<!--<th>DAY</th>-->
+<!--<th>1</th>-->
+<!--<th>2</th>-->
+<!--<th>3</th>-->
+<!--<th>4</th>-->
+<!--<th>5</th>-->
+<!--<th>6</th>-->
+<!--</tr>-->
+
+<!--{% for i in days %}-->
+<!--<tr>-->
+<!--<td>{{ i }}</td>-->
+<!--{% for new in class_timetable.values|slice:"0:6" %}-->
+<!--<td>STAFF &nbsp;&nbsp;{{ new }}</td>-->
+<!--{% endfor %}-->
+<!--</tr>-->
+<!--{% endfor %}-->
+
+<!--</table>-->
 </br>
 </br>
 </body>

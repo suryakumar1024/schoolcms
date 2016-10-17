@@ -3,37 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <style>
-
-        #id_std_names{
-        height: 300px;
-        width:70%;
-
-        }
-
-        body{
-        margin: auto;
-        width: 50%;
-        padding: 10px;
-
-        }
-    </style>
 </head>
 <body>
+<table class="table table-striped">
 
-<form id="form_add_student" action="{% url 'student_generator' cls %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+    <tr>
+        <th>DAY</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+    </tr>
 
-    {{ form.as_table }}
-</br>
-    <center><input value="Submit" type="submit" class="btn btn-primary"></center>
-</form>
+    {% for key, value in table.items %}
+    <tr>
+        <td>{{ key }}</td>
+        {% for period in value %}
+            <td>{{ period }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+
+
 
 </body>
 </html>

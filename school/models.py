@@ -17,6 +17,9 @@ class Student(models.Model):
     student_name = models.CharField(max_length=128, null=False, blank=False)
     gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default='-')
 
+    class Meta:
+        ordering = ['student_name']
+
     def __unicode__(self):
         return '%s - %s' %(self.fk_primary_class.class_name, self.student_name)
 
@@ -50,3 +53,19 @@ class Staff(models.Model):
 
     def __unicode__(self):
         return '%s - %s' %(self.fk_primary_class.class_name, self.staff_name)
+
+
+class Timetable(models.Model):
+    fk_primary_class = models.ForeignKey(PrimaryClass)
+    name_of_day = models.CharField(max_length=10)
+
+    def __unicode__(self):
+        return self.name_of_day
+
+
+class Period(models.Model):
+    fk_timetable = models.ForeignKey(Timetable)
+    subject_period = models.CharField(max_length=10)
+
+    def __unicode__(self):
+        return self.subject_period
