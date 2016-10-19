@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404
 
-from form import ClassForm, StaffForm, StudentForm, SubjectForm, StudentMarkForm, StudentGeneratorbox
+from form import StudentForm, StudentMarkForm, StudentGeneratorbox, Table
 from models import PrimaryClass, Subject, Staff, Student, Timetable, Period
 
 
@@ -89,7 +89,6 @@ def sort_qs_with_sub_name(student_qs, sub_name):
 
 
 def generate_time_table(request):
-
     if Period.objects.exists() or Timetable.objects.exists():
         Period.objects.all().delete()
         Timetable.objects.all().delete()
@@ -98,15 +97,27 @@ def generate_time_table(request):
             for day in range(len(settings.DAY_OF_WEEK)):
                 instance_time_table = Timetable.objects.create(fk_primary_class=instance_primary_class,
                                                                name_of_day=settings.DAY_OF_WEEK[day])
-                for period in range(0,6):
-                    Period.objects.create(fk_timetable=instance_time_table, subject_period=random.choice(settings.STAFF))
-            # for period in range(0,5):
-            #     c = period + standard
-            #     if period >= len(settings.STAFF):
-            #         p = period - len(settings.STAFF)
-            #         Period.objects.create(fk_timetable=instance_time_table, subject_period=settings.STAFF[p])
-            #     else:
-            #         Period.objects.create(fk_timetable=instance_time_table, subject_period=settings.STAFF[c])
+                for period in range(0, 6):
+                    Period.objects.create(fk_timetable=instance_time_table,
+                                          subject_period=random.choice(settings.STAFF))
+    # if Period.objects.exists() or Timetable.objects.exists():
+    #     Period.objects.all().delete()
+    #     Timetable.objects.all().delete()
+    #     generate_time_table(request)
+    # else:
+    #     for day in range(len(settings.DAY_OF_WEEK)):
+    #         for classes_num, item in enumerate(settings.PRIMARY_CLASSES):
+    #             # classes_num = range(0, 5)
+    #             for period in range(0, 6):
+    #                 instance_primary_class = get_object_or_404(PrimaryClass,
+    #                                                            class_name=settings.PRIMARY_CLASSES[classes_num])
+    #
+    #                 instance_time_table = Timetable.objects.create(fk_primary_class=instance_primary_class,
+    #                                                                name_of_day=settings.DAY_OF_WEEK[day])
+    #
+    #                 Period.objects.create(fk_timetable=instance_time_table,
+    #                                       subject_period=settings.STAFF[period + classes_num])
+
     return render(request, 'school/index.html', {'classes': PrimaryClass.objects.all()})
 
 
@@ -179,22 +190,30 @@ def add_student(request, cls):
             for sub in settings.SUBJECTS:
                 Subject.objects.create(fk_primary_class=class_instance, fk_student=add_std_inst, subject_name=sub)
         else:
-            return render(request, 'school/add_student.html', {'form': form,'cls': cls, 'class_name': class_instance })
+            return render(request, 'school/add_student.html', {'form': form, 'cls': cls, 'class_name': class_instance})
     return HttpResponseRedirect(reverse('details', kwargs={'cls': class_instance.id}))
 
 
-def get_staff_details(request,stf):
+def chunk(ls):
+    n = 6
+    for i in range(0, len(ls), n):
+        yield ls[i:i+n]
+
+
+def get_staff_details(request, stf):
     days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
     class_timetable = get_time_table(5, 5)['class'+str(stf)]
+    ls = class_timetable.values()
+    gen = list(chunk(ls))
+
     return render(request, 'school/staff_timetable.html', {'days': days, 'class_timetable': class_timetable})
 
 
-def get_class_details(request, cls, types=None, subject=None):
+def get_class_details(request, cls, subject=None):
     individual_class_instance = get_object_or_404(PrimaryClass, pk=cls)
     student_qs = Student.objects.filter(fk_primary_class=individual_class_instance)
     list_class_instance = PrimaryClass.objects.all()
     days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
-    # import ipdb; ipdb.set_trace()
     if subject:
         cls_std_sub = sort_qs_with_sub_name(student_qs, subject)
     else:
@@ -231,8 +250,7 @@ def get_class_details(request, cls, types=None, subject=None):
                                                   'list_class_instance': list_class_instance,
                                                   })
 
-    # 'CheckBoxdelete': CheckBoxdelete(queryset=Student.objects.all())
-                                                  # })
+    # 'CheckBoxdelete': CheckBoxdelete(queryset=Student.objects.all())})
 
 
 def delete_all(request):
@@ -308,7 +326,7 @@ def addmark(request, std):
 #
 
 def delete(request, std):
-    student_object =get_object_or_404(Student, pk=std)
+    student_object = get_object_or_404(Student, pk=std)
     student_object.delete()
     return HttpResponseRedirect(reverse('index'))
 
@@ -322,19 +340,30 @@ def student_generator(request, cls):
             form_student_list = form.cleaned_data['STUDENT_NAME']
             student_data = form_student_list.split(",")
             student_list = []
+            refined_student_list = []
 
             for student in range(len(student_data)):
                 student_list.append((student_data[student].strip()))
+            for student in range(len(student_list)):
+                refined_student_list.append(student_list[student].replace("'", ""))
 
             # student_list is obtained
             individual_class = get_object_or_404(PrimaryClass, pk=cls)
 
-            for each_student in student_list:
-                student_instance = Student.objects.create(fk_primary_class=individual_class ,
+            for each_student in refined_student_list:
+                student_instance = Student.objects.create(fk_primary_class=individual_class,
                                                           student_name=each_student)
                 for sub in settings.SUBJECTS:
                     Subject.objects.create(fk_primary_class=individual_class, fk_student=student_instance,
-                                           subject_name=sub, subject_mark = random.randint(30,100))
+                                           subject_name=sub, subject_mark=random.randint(30, 100))
             return get_class_details(request, cls)
 
     return render(request, 'school/student_detail_entry.html', {'form': form, 'cls': cls})
+
+
+def table_edit(request):
+    if request.method == 'GET':
+        form = Table()
+    else:
+        form = Table(request.POST)
+    return render(request, 'school/report.html', {'form': form})

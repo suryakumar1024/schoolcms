@@ -1,14 +1,9 @@
 import re
 
-from django.core.validators import RegexValidator
 from django.forms import ModelForm
-from django.core.validators import validate_integer
 from django.core.exceptions import ValidationError
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from models import PrimaryClass, Subject, Staff, Student, Timetable, Period
-
-
 from models import PrimaryClass, Staff, Student, Subject
 
 
@@ -72,9 +67,24 @@ class StudentMarkForm(forms.Form):
     Social = forms.CharField(max_length=3, validators=[validate_mark])
 
 
+# def validate_StudentGeneratorbox(value):
+#     if re.match(r'^[0-9]$'):
+#         raise ValidationError(_('%(value)s% is not allowed'))
+
+
 class StudentGeneratorbox(forms.Form):
-    STUDENT_NAME = forms.CharField(widget= forms.Textarea,required=True)
+    STUDENT_NAME = forms.CharField(widget=forms.Textarea, required=True)
 
 
-# class CheckBoxdelete(forms.Form):
-#     selected_items = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+def validate_period(value):
+    if not re.match(r'^[\d+]+$', value):
+        raise ValidationError(_('%(value)s is not allowed'), params={'value': value},)
+
+
+class Table(forms.Form):
+    subject_period_1 = forms.CharField(max_length=10, validators=[validate_period])
+    subject_period_2 = forms.CharField(max_length=10, validators=[validate_period])
+    subject_period_3 = forms.CharField(max_length=10, validators=[validate_period])
+    subject_period_4 = forms.CharField(max_length=10, validators=[validate_period])
+    subject_period_5 = forms.CharField(max_length=10, validators=[validate_period])
+    subject_period_6 = forms.CharField(max_length=10, validators=[validate_period])
